@@ -1,0 +1,91 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String            @id @default(uuid())
+  name         String
+  email        String            @unique
+  password     String
+  createdAt    DateTime          @default(now())
+  consoles     Console[]
+  games        Game[]
+  achievements UserAchievement[]
+  dailyQuizzes DailyQuiz[]
+}
+
+model Console {
+  id             String   @id @default(uuid())
+  name           String
+  releaseDate    DateTime
+  manufacturer   String
+  generation     Int
+  mediaType      String
+  images         String[]
+  pricePaid      Float
+  estimatedValue Float
+  rating         Int
+  trivia         String?
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  games          Game[]
+  createdAt      DateTime @default(now())
+}
+
+model Game {
+  id             String   @id @default(uuid())
+  name           String
+  releaseDate    DateTime
+  developer      String
+  saga           String?
+  genres         String[]
+  consoleName    String
+  consoleId      String?
+  console        Console? @relation(fields: [consoleId], references: [id], onDelete: SetNull)
+  synopsis       String?
+  trivia         String?
+  coverUrl       String?
+  pricePaid      Float
+  estimatedValue Float
+  rating         Int
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt      DateTime @default(now())
+}
+
+model Achievement {
+  id          String            @id @default(uuid())
+  code        String            @unique
+  title       String
+  description String
+  icon        String
+  users       UserAchievement[]
+}
+
+model UserAchievement {
+  id            String      @id @default(uuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievementId String
+  achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+  unlockedAt    DateTime    @default(now())
+
+  @@unique([userId, achievementId])
+}
+
+model DailyQuiz {
+  id        String   @id @default(uuid())
+  date      DateTime @db.Date
+  questions Json
+  answered  Boolean  @default(false)
+  score     Int?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+}
