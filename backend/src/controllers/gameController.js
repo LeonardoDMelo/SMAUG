@@ -35,6 +35,7 @@ const create = async (req, res) => {
       synopsis,
       trivia,
       coverUrl,
+      isDigital,
       pricePaid,
       estimatedValue,
       rating,
@@ -74,6 +75,7 @@ const create = async (req, res) => {
         synopsis: synopsis || null,
         trivia: trivia || null,
         coverUrl: coverUrl || null,
+        isDigital: Boolean(isDigital),
         pricePaid: parseFloat(pricePaid),
         estimatedValue: parseFloat(estimatedValue),
         rating: parseInt(rating, 10),
@@ -174,6 +176,7 @@ const update = async (req, res) => {
       synopsis,
       trivia,
       coverUrl,
+      isDigital,
       pricePaid,
       estimatedValue,
       rating,
@@ -191,6 +194,7 @@ const update = async (req, res) => {
     if (synopsis !== undefined) data.synopsis = synopsis;
     if (trivia !== undefined) data.trivia = trivia;
     if (coverUrl !== undefined) data.coverUrl = coverUrl;
+    if (isDigital !== undefined) data.isDigital = Boolean(isDigital);
     if (pricePaid !== undefined) data.pricePaid = parseFloat(pricePaid);
     if (estimatedValue !== undefined) data.estimatedValue = parseFloat(estimatedValue);
     if (rating !== undefined) data.rating = parseInt(rating, 10);

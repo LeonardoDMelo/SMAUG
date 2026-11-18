@@ -14,6 +14,7 @@ const initialForm = {
   synopsis: '',
   trivia: '',
   coverUrl: '',
+  isDigital: false,
   pricePaid: '',
   estimatedValue: '',
   rating: '',
@@ -46,6 +47,7 @@ const GameFormModal = ({ open, onClose, onSaved, item = null }) => {
   const [rawgLoading, setRawgLoading] = useState(false);
   const [rawgOpen, setRawgOpen] = useState(false);
   const [rawgFilling, setRawgFilling] = useState(false);
+  const [rawgHint, setRawgHint] = useState('');
   const searchRef = useRef(null);
   const isEditing = Boolean(item?.id);
 
@@ -58,6 +60,7 @@ const GameFormModal = ({ open, onClose, onSaved, item = null }) => {
     setRawgResults([]);
     setRawgOpen(false);
     setRawgFilling(false);
+    setRawgHint('');
 
     if (item) {
       setForm({
@@ -70,6 +73,7 @@ const GameFormModal = ({ open, onClose, onSaved, item = null }) => {
         synopsis: item.synopsis || '',
         trivia: item.trivia || '',
         coverUrl: item.coverUrl || '',
+        isDigital: Boolean(item.isDigital),
         pricePaid: item.pricePaid?.toString() || '',
         estimatedValue: item.estimatedValue?.toString() || '',
         rating: item.rating?.toString() || '',
@@ -88,24 +92,37 @@ const GameFormModal = ({ open, onClose, onSaved, item = null }) => {
       setRawgResults([]);
       setRawgOpen(false);
       setRawgLoading(false);
+      setRawgHint('');
       return undefined;
     }
 
     const controller = new AbortController();
     const timer = setTimeout(async () => {
       setRawgLoading(true);
+      setRawgHint('');
 
       try {
         const { data } = await api.get('/external/games/search', {
           params: { query },
           signal: controller.signal,
         });
-        setRawgResults(Array.isArray(data) ? data : []);
+        const list = Array.isArray(data) ? data : [];
+        setRawgResults(list);
         setRawgOpen(true);
+
+        if (list.some((game) => game.source === 'catalog')) {
+          setRawgHint('Priorizando clássicos de console. A RAWG pode estar lenta ou fora.');
+        } else if (list.length && list.every((game) => game.source === 'steam')) {
+          setRawgHint('A RAWG está indisponível. Resultados da Steam (mais focados em PC).');
+        }
       } catch (err) {
         if (err.name === 'CanceledError' || err.code === 'ERR_CANCELED') return;
         setRawgResults([]);
-        setRawgOpen(false);
+        setRawgOpen(true);
+        setRawgHint(
+          err.response?.data?.error ||
+            'Não foi possível buscar jogos agora. Tente de novo em instantes.'
+        );
       } finally {
         setRawgLoading(false);
       }
@@ -181,6 +198,7 @@ const GameFormModal = ({ open, onClose, onSaved, item = null }) => {
         ? normalizeItemGenres(game)
         : prev.genres,
       coverUrl: game.coverUrl || prev.coverUrl,
+      consoleName: game.consoleName || prev.consoleName,
     }));
 
     try {
@@ -196,6 +214,7 @@ const GameFormModal = ({ open, onClose, onSaved, item = null }) => {
           : prev.genres,
         coverUrl: data.coverUrl || prev.coverUrl,
         synopsis: data.synopsis || prev.synopsis,
+        consoleName: data.consoleName || prev.consoleName,
       }));
     } catch {
       setError('Dados básicos preenchidos, mas a sinopse não pôde ser carregada.');
@@ -226,6 +245,7 @@ const GameFormModal = ({ open, onClose, onSaved, item = null }) => {
         synopsis: form.synopsis || null,
         trivia: form.trivia || null,
         coverUrl: form.coverUrl || null,
+        isDigital: Boolean(form.isDigital),
         pricePaid: form.pricePaid,
         estimatedValue: form.estimatedValue,
         rating: form.rating,
@@ -297,8 +317,17 @@ const GameFormModal = ({ open, onClose, onSaved, item = null }) => {
               )}
             </div>
 
+            {rawgHint && !rawgOpen && (
+              <p className="mt-2 text-xs text-amber-300">{rawgHint}</p>
+            )}
+
             {rawgOpen && (
               <div className="absolute z-20 mt-2 max-h-64 w-full overflow-y-auto rounded-xl border border-slate-700 bg-slate-800 shadow-xl">
+                {rawgHint ? (
+                  <p className="border-b border-slate-700 px-4 py-2 text-xs text-amber-300">
+                    {rawgHint}
+                  </p>
+                ) : null}
                 {rawgResults.length === 0 ? (
                   <p className="px-4 py-3 text-sm text-slate-400">
                     Nenhum jogo encontrado
@@ -329,7 +358,10 @@ const GameFormModal = ({ open, onClose, onSaved, item = null }) => {
                           {game.name}
                         </p>
                         <p className="truncate text-xs text-slate-400">
-                          {game.releaseDate || 'Sem data'}
+                          {game.consoleName || game.releaseDate || 'Sem data'}
+                          {game.consoleName && game.releaseDate
+                            ? ` · ${String(game.releaseDate).slice(0, 4)}`
+                            : ''}
                           {game.genre ? ` · ${game.genre}` : ''}
                         </p>
                       </div>
@@ -385,6 +417,19 @@ const GameFormModal = ({ open, onClose, onSaved, item = null }) => {
                 </option>
               ))}
             </select>
+          </label>
+
+          <label className="flex items-center gap-3 rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 sm:col-span-2">
+            <input
+              type="checkbox"
+              name="isDigital"
+              checked={Boolean(form.isDigital)}
+              onChange={(event) =>
+                setForm((prev) => ({ ...prev, isDigital: event.target.checked }))
+              }
+              className="h-4 w-4 rounded border-slate-600 bg-slate-900 text-emerald-500 focus:ring-emerald-500"
+            />
+            <span className="text-sm text-slate-200">Versão digital</span>
           </label>
 
           <label className="block">

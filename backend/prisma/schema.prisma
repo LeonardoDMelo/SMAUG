@@ -50,6 +50,7 @@ model Game {
   synopsis       String?
   trivia         String?
   coverUrl       String?
+  isDigital      Boolean  @default(false)
   pricePaid      Float
   estimatedValue Float
   rating         Int

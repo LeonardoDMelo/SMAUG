@@ -2,7 +2,10 @@ const axios = require('axios');
 
 const rawgApi = axios.create({
   baseURL: 'https://api.rawg.io/api',
-  timeout: 10000,
+  timeout: 6000,
+  headers: {
+    'User-Agent': 'SMAUG/1.0 (college collection manager)',
+  },
 });
 
 const stripHtml = (html = '') =>
@@ -34,8 +37,10 @@ const searchGames = async (query) => {
     releaseDate: game.released || null,
     developer: game.developers?.[0]?.name || null,
     genre: (game.genres || []).map((item) => item.name).join(' / ') || null,
+    genres: (game.genres || []).map((item) => item.name),
     coverUrl: game.background_image || null,
     rating: game.rating ?? null,
+    source: 'rawg',
   }));
 };
 
@@ -60,6 +65,7 @@ const getGameDetails = async (rawgId) => {
     coverUrl: data.background_image || null,
     rating: data.rating ?? null,
     synopsis: stripHtml(data.description_raw || data.description || ''),
+    source: 'rawg',
   };
 };
 

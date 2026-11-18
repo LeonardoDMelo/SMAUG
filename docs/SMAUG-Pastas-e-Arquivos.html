@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>SMAUG — Função de cada pasta e arquivo</title>
+  <style>
+    @page { size: A4; margin: 16mm 14mm; }
+    * { box-sizing: border-box; }
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      color: #1e293b;
+      font-size: 10.5pt;
+      line-height: 1.5;
+      margin: 0;
+    }
+    h1 { font-size: 26pt; color: #0f172a; margin: 0 0 8px; }
+    h2 {
+      font-size: 15pt;
+      color: #0f172a;
+      border-bottom: 3px solid #f59e0b;
+      padding-bottom: 5px;
+      margin-top: 26px;
+      page-break-after: avoid;
+    }
+    h3 {
+      font-size: 12pt;
+      color: #334155;
+      margin: 16px 0 6px;
+      page-break-after: avoid;
+    }
+    p { margin: 7px 0; }
+    ul { margin: 6px 0 10px; padding-left: 18px; }
+    li { margin: 3px 0; }
+    code {
+      font-family: Consolas, "Courier New", monospace;
+      background: #f1f5f9;
+      padding: 1px 4px;
+      border-radius: 3px;
+      font-size: 9pt;
+    }
+    pre {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 8.5pt;
+      white-space: pre-wrap;
+      page-break-inside: avoid;
+    }
+    .cover {
+      min-height: 88vh;
+      padding: 48px 28px;
+      background: linear-gradient(160deg, #0f172a 0%, #1e293b 60%, #334155 100%);
+      color: #f8fafc;
+      border-radius: 8px;
+      page-break-after: always;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .cover h1 { color: #fff; font-size: 32pt; }
+    .cover .badge {
+      display: inline-block;
+      background: #f59e0b;
+      color: #0f172a;
+      font-weight: 700;
+      font-size: 9.5pt;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 6px 10px;
+      border-radius: 4px;
+      width: fit-content;
+      margin-bottom: 18px;
+    }
+    .cover .subtitle { color: #cbd5e1; font-size: 13pt; max-width: 540px; }
+    .cover .meta {
+      margin-top: 40px;
+      padding-top: 14px;
+      border-top: 1px solid #475569;
+      color: #94a3b8;
+      font-size: 10pt;
+    }
+    .folder {
+      background: #fffbeb;
+      border-left: 5px solid #f59e0b;
+      padding: 10px 12px;
+      margin: 10px 0 14px;
+      border-radius: 0 6px 6px 0;
+      page-break-inside: avoid;
+    }
+    .file {
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin: 8px 0;
+      page-break-inside: avoid;
+    }
+    .file h4 {
+      margin: 0 0 4px;
+      font-size: 10.5pt;
+      color: #0f172a;
+      font-family: Consolas, "Courier New", monospace;
+    }
+    .toc { page-break-after: always; }
+    .toc ol { font-size: 11pt; }
+    .toc li { margin: 7px 0; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 14px;
+      font-size: 9.5pt;
+      page-break-inside: avoid;
+    }
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 7px 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #0f172a; color: #fff; }
+    tr:nth-child(even) td { background: #f8fafc; }
+    .note {
+      background: #eff6ff;
+      border-left: 5px solid #3b82f6;
+      padding: 10px 12px;
+      margin: 10px 0;
+      border-radius: 0 6px 6px 0;
+      page-break-inside: avoid;
+    }
+    .footer-note {
+      margin-top: 24px;
+      padding-top: 10px;
+      border-top: 1px solid #e2e8f0;
+      color: #64748b;
+      font-size: 9pt;
+    }
+  </style>
+</head>
+<body>
+
+<section class="cover">
+  <div class="badge">Mapa do código · estudo e apresentação</div>
+  <h1>SMAUG</h1>
+  <p class="subtitle">
+    O que cada pasta faz — e, dentro dela, o papel de cada arquivo.
+    Leia na ordem: primeiro o “porquê” da pasta, depois o “o que” de cada arquivo.
+  </p>
+  <p class="meta">
+    Projeto full-stack: React (frontend) + Express/Prisma/PostgreSQL (backend)<br />
+    Documento focado em estrutura de pastas e arquivos
+  </p>
+</section>
+
+<section class="toc">
+  <h2>Como este PDF está organizado</h2>
+  <p>
+    Cada seção grande é uma <strong>pasta</strong>. O quadro amarelo explica a
+    responsabilidade da pasta. Em seguida, cada arquivo ganha um cartão próprio.
+  </p>
+  <ol>
+    <li>Visão da raiz do projeto</li>
+    <li>Pasta <code>backend/</code></li>
+    <li>Pasta <code>backend/prisma/</code></li>
+    <li>Pasta <code>backend/src/</code></li>
+    <li>Pasta <code>backend/src/config/</code></li>
+    <li>Pasta <code>backend/src/middlewares/</code></li>
+    <li>Pasta <code>backend/src/utils/</code></li>
+    <li>Pasta <code>backend/src/routes/</code></li>
+    <li>Pasta <code>backend/src/controllers/</code></li>
+    <li>Pasta <code>backend/src/services/</code></li>
+    <li>Pasta <code>backend/src/data/</code></li>
+    <li>Pasta <code>frontend/</code></li>
+    <li>Pasta <code>frontend/src/</code></li>
+    <li>Pasta <code>frontend/src/pages/</code></li>
+    <li>Pasta <code>frontend/src/components/</code></li>
+    <li>Pasta <code>frontend/src/context/</code></li>
+    <li>Pasta <code>frontend/src/services/</code></li>
+    <li>Pasta <code>frontend/src/constants/</code></li>
+    <li>Pasta <code>frontend/src/utils/</code></li>
+    <li>Arquivos da raiz e documentação</li>
+  </ol>
+  <div class="note">
+    <strong>Analogia rápida:</strong> o frontend é a loja (vitrines e atendentes).
+    O backend é o estoque e o caixa. As pastas separam “quem atende o cliente”
+    (controllers), “o mapa das ruas” (routes), “as receitas internas” (services)
+    e “as prateleiras” (banco/Prisma).
+  </div>
+</section>
+
+<h2>1. Visão da raiz</h2>
+<pre>smaug/
+├── backend/          ← API (servidor Node/Express)
+├── frontend/         ← site (React + Vite)
+├── docs/             ← PDFs e HTMLs de estudo
+├── DOCUMENTACAO.md   ← texto longo sobre o sistema
+├── package.json      ← resto antigo na raiz (o app real está nas duas pastas)
+└── .gitignore        ← o que o Git não envia (ex.: .env, node_modules)</pre>
+<p>
+  O projeto é um <strong>monorepo simples</strong>: dois aplicativos irmãos.
+  Você sobe o backend na porta 3000 e o frontend na 5173.
+</p>
+
+<!-- BACKEND -->
+<h2>2. Pasta <code>backend/</code></h2>
+<div class="folder">
+  <strong>Para que serve esta pasta?</strong>
+  É o servidor. Recebe pedidos HTTP do React, autentica o usuário, aplica regras
+  de negócio e grava/lê dados no PostgreSQL. Sem o backend, a tela não tem de onde tirar os dados.
+</div>
+
+<div class="file">
+  <h4>backend/package.json</h4>
+  Lista as bibliotecas do servidor (Express, Prisma, JWT, bcrypt, axios, cors, dotenv)
+  e os scripts: <code>npm run dev</code> (nodemon), <code>start</code> e <code>seed</code>.
+</div>
+<div class="file">
+  <h4>backend/.env</h4>
+  Segredos locais: URL do banco, <code>JWT_SECRET</code> e <code>RAWG_API_KEY</code>.
+  <strong>Não vai para o GitHub.</strong>
+</div>
+<div class="file">
+  <h4>backend/.env.example</h4>
+  Modelo vazio do <code>.env</code>, para outra pessoa saber quais variáveis criar.
+</div>
+<div class="file">
+  <h4>backend/package-lock.json</h4>
+  Trava as versões exatas das dependências. Não se edita na mão.
+</div>
+
+<h2>3. Pasta <code>backend/prisma/</code></h2>
+<div class="folder">
+  <strong>Para que serve esta pasta?</strong>
+  É o “contrato” com o banco de dados. O Prisma lê o schema, gera o client JS
+  e aplica migrations (alterações SQL versionadas).
+</div>
+
+<div class="file">
+  <h4>schema.prisma</h4>
+  Desenho das tabelas: <code>User</code>, <code>Console</code>, <code>Game</code>
+  (incluindo <code>isDigital</code>), <code>Achievement</code>, <code>UserAchievement</code>
+  e <code>DailyQuiz</code>. Define tipos, relações e regras como email único.
+</div>
+<div class="file">
+  <h4>seed.js</h4>
+  Popula as 4 conquistas padrão (<code>FIRST_CONSOLE</code>, <code>FIRST_GAME</code>,
+  <code>COLLECTOR_10</code>, <code>QUIZ_MASTER</code>) com upsert. Não cria usuário.
+</div>
+<div class="file">
+  <h4>migrations/</h4>
+  Histórico SQL. Cada subpasta é uma mudança no banco.
+</div>
+<div class="file">
+  <h4>migrations/20261026134636_init/migration.sql</h4>
+  Criação inicial de todas as tabelas.
+</div>
+<div class="file">
+  <h4>migrations/20261111200000_add_game_is_digital/migration.sql</h4>
+  Adiciona a coluna <code>isDigital</code> na tabela <code>Game</code>
+  (checkbox “versão digital”).
+</div>
+<div class="file">
+  <h4>migrations/migration_lock.toml</h4>
+  Trava o provedor (PostgreSQL) para as migrations não misturarem bancos.
+</div>
+
+<h2>4. Pasta <code>backend/src/</code></h2>
+<div class="folder">
+  <strong>Para que serve esta pasta?</strong>
+  Código-fonte da API. Tudo que “roda de verdade” no servidor (exceto Prisma/seed) mora aqui.
+</div>
+
+<div class="file">
+  <h4>server.js</h4>
+  Ponto de entrada: carrega o <code>.env</code>, importa o <code>app</code> e
+  faz <code>listen</code> na porta 3000. Não define rotas.
+</div>
+<div class="file">
+  <h4>app.js</h4>
+  Monta o Express: CORS, JSON, health check <code>GET /</code> e encaixa cada
+  grupo de rotas em um prefixo (<code>/api/auth</code>, <code>/api/games</code>…).
+  Também dá <code>require</code> no <code>achievementService</code> para registrar o EventEmitter.
+</div>
+
+<h2>5. Pasta <code>backend/src/config/</code></h2>
+<div class="folder">
+  <strong>Para que serve esta pasta?</strong>
+  Infraestrutura compartilhada. Evita criar várias conexões com o banco.
+</div>
+<div class="file">
+  <h4>prisma.js</h4>
+  Cria <strong>uma</strong> instância de <code>PrismaClient</code> e exporta.
+  Controllers e services importam daqui em vez de instanciar o Prisma de novo.
+</div>
+
+<h2>6. Pasta <code>backend/src/middlewares/</code></h2>
+<div class="folder">
+  <strong>Para que serve esta pasta?</strong>
+  Funções que rodam <em>antes</em> do controller. No SMAUG, a principal é a autenticação:
+  se o token for inválido, a request nem chega na lógica de consoles/jogos.
+</div>
+<div class="file">
+  <h4>authMiddleware.js</h4>
+  Lê o header <code>Authorization: Bearer …</code>, verifica o JWT e coloca
+  <code>req.userId</code>. Sem token válido responde 401.
+</div>
+
+<h2>7. Pasta <code>backend/src/utils/</code></h2>
+<div class="folder">
+  <strong>Para que serve esta pasta?</strong>
+  Funções pequenas e reutilizáveis, sem regra de negócio pesada.
+</div>
+<div class="file">
+  <h4>jwt.js</h4>
+  <code>signToken</code> (cria o token com validade de 7 dias) e
+  <code>verifyToken</code> (valida a assinatura com <code>JWT_SECRET</code>).
+</div>
+
+<h2>8. Pasta <code>backend/src/routes/</code></h2>
+<div class="folder">
+  <strong>Para que serve esta pasta?</strong>
+  É o mapa de URLs. Cada arquivo diz: “neste caminho, chame aquela função do controller”.
+  Aqui <em>não</em> se valida formulário nem se grava no banco — só o encaminhamento.
+  Quase todos aplicam <code>authMiddleware</code>.
+</div>
+
+<div class="file">
+  <h4>authRoutes.js</h4>
+  <code>POST /register</code>, <code>POST /login</code> (públicas) e
+  <code>GET /me</code> (protegida). Prefixo final: <code>/api/auth</code>.
+</div>
+<div class="file">
+  <h4>consoleRoutes.js</h4>
+  CRUD de consoles: POST/GET <code>/</code>, GET/PUT/DELETE <code>/:id</code>.
+  Prefixo: <code>/api/consoles</code>.
+</div>
+<div class="file">
+  <h4>gameRoutes.js</h4>
+  CRUD de jogos no mesmo padrão REST. Prefixo: <code>/api/games</code>.
+</div>
+<div class="file">
+  <h4>dashboardRoutes.js</h4>
+  Só <code>GET /stats</code>. Prefixo: <code>/api/dashboard</code>.
+</div>
+<div class="file">
+  <h4>achievementRoutes.js</h4>
+  Listar conquistas, grant, grant-all, limpar e revogar. Prefixo: <code>/api/achievements</code>.
+</div>
+<div class="file">
+  <h4>quizRoutes.js</h4>
+  <code>GET /today</code>, <code>POST /submit</code>, <code>POST /reset</code> (demo).
+  Prefixo: <code>/api/quiz</code>.
+</div>
+<div class="file">
+  <h4>externalGameRoutes.js</h4>
+  Busca e detalhes de jogos externos.
+  <code>GET /games/search</code> e <code>GET /games/:id</code>.
+  Prefixo: <code>/api/external</code>.
+</div>
+
+<h2>9. Pasta <code>backend/src/controllers/</code></h2>
+<div class="folder">
+  <strong>Para que serve esta pasta? (a que você citou como exemplo)</strong><br /><br />
+  O controller é o “atendente do guichê”. Ele:
+  <ul>
+    <li>recebe <code>req</code> (body, params, query, e o <code>userId</code> do middleware);</li>
+    <li>valida se faltou campo;</li>
+    <li>chama Prisma e/ou um service;</li>
+    <li>devolve <code>res</code> com JSON e o código HTTP certo (200, 201, 400…).</li>
+  </ul>
+  Ele <em>não</em> deveria ser um amontoado infinito de regras reaproveitáveis —
+  essas vão para <code>services/</code>. Cada arquivo abaixo cuida de um assunto da API.
+</div>
+
+<div class="file">
+  <h4>authController.js</h4>
+  Cadastro (hash bcrypt + JWT), login (compara senha) e <code>me</code> (dados do usuário logado, sem senha).
+</div>
+<div class="file">
+  <h4>consoleController.js</h4>
+  CRUD de consoles do usuário. Filtra por fabricante/geração/mídia.
+  No create dispara conquistas. No delete apaga jogos ligados em transação.
+</div>
+<div class="file">
+  <h4>gameController.js</h4>
+  CRUD de jogos. Normaliza gêneros (array), tenta vincular <code>consoleId</code>
+  se o usuário já tem aquele console, grava <code>isDigital</code> e dispara conquistas no create.
+</div>
+<div class="file">
+  <h4>dashboardController.js</h4>
+  Agrega estatísticas: totais, soma de preços, jogos por console e por gênero.
+</div>
+<div class="file">
+  <h4>achievementController.js</h4>
+  Lista conquistas com flag <code>unlocked</code>. Também tem ações de demo/admin:
+  conceder uma, conceder todas, limpar e revogar — devolvendo <code>unlockedAchievements</code> para o toast.
+</div>
+<div class="file">
+  <h4>quizController.js</h4>
+  Busca o quiz do dia (escondendo o gabarito se ainda não respondeu),
+  corrige as 5 respostas, libera QUIZ_MASTER se gabaritar, e reseta o quiz para demonstração.
+</div>
+<div class="file">
+  <h4>externalGameController.js</h4>
+  Orquestra a busca de jogos: catálogo local de consoles primeiro, depois RAWG,
+  e se a RAWG cair, Steam. No detalhe, escolhe a fonte pelo id (<code>local-…</code>, <code>steam-…</code> ou RAWG).
+</div>
+
+<h2>10. Pasta <code>backend/src/services/</code></h2>
+<div class="folder">
+  <strong>Para que serve esta pasta?</strong>
+  Regras de negócio e integrações que vários controllers podem usar.
+  Um service não precisa saber de Express (<code>req</code>/<code>res</code>).
+  Ele recebe dados, faz o trabalho e devolve um resultado.
+</div>
+
+<div class="file">
+  <h4>achievementService.js</h4>
+  Concede conquista só se o usuário ainda não tem.
+  Funções <code>processConsoleCreated</code>, <code>processGameCreated</code> e
+  <code>processQuizMaster</code>. Também registra um EventEmitter (Observer).
+</div>
+<div class="file">
+  <h4>quizService.js</h4>
+  Banco grande de perguntas (~70). Sorteia 5 evitando as dos quizzes recentes
+  do mesmo usuário (inclusive no reset de demo).
+</div>
+<div class="file">
+  <h4>rawgService.js</h4>
+  Cliente HTTP da RAWG: busca e detalhes, limpa HTML da sinopse. Timeout curto
+  para não travar a tela se a API externa estiver lenta.
+</div>
+<div class="file">
+  <h4>steamService.js</h4>
+  Plano B de busca/detalhe na Steam Store (melhor para jogos de PC).
+</div>
+
+<h2>11. Pasta <code>backend/src/data/</code></h2>
+<div class="folder">
+  <strong>Para que serve esta pasta?</strong>
+  Dados estáticos do próprio SMAUG — não vêm de API externa nem do PostgreSQL.
+  Usado para o autocomplete de clássicos de console quando a RAWG falha.
+</div>
+<div class="file">
+  <h4>consoleGames.js</h4>
+  Catálogo local (Zelda, Mario, Halo, Chrono Trigger, etc.) com nome, console,
+  gêneros, sinopse. Exporta <code>searchLocalConsoleGames</code> e <code>getLocalConsoleGame</code>.
+</div>
+
+<!-- FRONTEND -->
+<h2>12. Pasta <code>frontend/</code></h2>
+<div class="folder">
+  <strong>Para que serve esta pasta?</strong>
+  É o site que o usuário vê. React desenha as telas; Vite empacota e sobe o
+  servidor de desenvolvimento na porta 5173.
+</div>
+
+<div class="file">
+  <h4>package.json</h4>
+  Dependências da interface: React 19, React Router, Axios, Tailwind 3, Recharts, lucide-react, Vite.
+</div>
+<div class="file">
+  <h4>vite.config.js</h4>
+  Liga o plugin React e fixa a porta 5173.
+</div>
+<div class="file">
+  <h4>tailwind.config.js</h4>
+  Diz ao Tailwind quais arquivos varrer para gerar as classes CSS.
+</div>
+<div class="file">
+  <h4>postcss.config.js</h4>
+  Liga Tailwind + Autoprefixer no pipeline de CSS.
+</div>
+<div class="file">
+  <h4>index.html</h4>
+  Página HTML mínima com <code>&lt;div id="root"&gt;</code>. O React “entra” nesse div.
+</div>
+
+<h2>13. Pasta <code>frontend/src/</code></h2>
+<div class="folder">
+  <strong>Para que serve esta pasta?</strong>
+  Todo o código da interface. Convenção típica de app React: um arquivo de entrada,
+  o App com rotas, e pastas por tipo (páginas, componentes, contextos).
+</div>
+
+<div class="file">
+  <h4>main.jsx</h4>
+  <code>createRoot</code> no <code>#root</code>, envolve <code>App</code> com <code>StrictMode</code>
+  e importa o CSS global.
+</div>
+<div class="file">
+  <h4>index.css</h4>
+  Diretivas <code>@tailwind</code> e fundo escuro padrão do body.
+</div>
+<div class="file">
+  <h4>App.jsx</h4>
+  Árvore de providers (<code>AuthProvider</code> + <code>AchievementToastProvider</code>)
+  e o React Router: login/register públicos; dashboard, consoles, games, achievements e quiz privados.
+</div>
+
+<h2>14. Pasta <code>frontend/src/pages/</code></h2>
+<div class="folder">
+  <strong>Para que serve esta pasta?</strong>
+  Uma tela inteira por rota. Página = layout daquela URL (quase sempre com Navbar).
+  Formulários grandes reutilizáveis ficam em <code>components/</code> (modais).
+</div>
+
+<div class="file">
+  <h4>Login.jsx</h4>
+  Formulário email/senha. Chama <code>login</code> do AuthContext e redireciona se já estiver autenticado.
+</div>
+<div class="file">
+  <h4>Register.jsx</h4>
+  Cadastro de nome, email e senha. Depois do sucesso, o usuário já entra logado.
+</div>
+<div class="file">
+  <h4>Dashboard.jsx</h4>
+  Cards de totais (consoles, jogos, gasto, valor estimado) e gráficos Recharts
+  (jogos por console e por gênero).
+</div>
+<div class="file">
+  <h4>Consoles.jsx</h4>
+  Lista em cards, filtros, abrir modal de criar/editar e confirmar exclusão.
+</div>
+<div class="file">
+  <h4>Games.jsx</h4>
+  Lista de jogos com capa, filtros múltiplos, badge “Digital” e os mesmos fluxos de editar/excluir.
+</div>
+<div class="file">
+  <h4>Achievements.jsx</h4>
+  Grade de conquistas locked/unlocked e botões para grant/revoke (útil na apresentação).
+</div>
+<div class="file">
+  <h4>Quiz.jsx</h4>
+  Mostra as 5 perguntas, envia respostas, tela de resultado e o botão
+  <strong>Resetar quiz (demo)</strong> que gera outro conjunto.
+</div>
+
+<h2>15. Pasta <code>frontend/src/components/</code></h2>
+<div class="folder">
+  <strong>Para que serve esta pasta?</strong>
+  Pedaços de UI reutilizados em mais de uma tela, ou blocos grandes demais para
+  deixar misturados na page (modais).
+</div>
+
+<div class="file">
+  <h4>Navbar.jsx</h4>
+  Barra superior: links (Dashboard, Consoles, Jogos, Conquistas, Quiz), nome do usuário e logout.
+</div>
+<div class="file">
+  <h4>PrivateRoute.jsx</h4>
+  Se não estiver logado, manda para <code>/login</code>. Enquanto carrega o usuário, mostra “Carregando…”.
+</div>
+<div class="file">
+  <h4>ConsoleFormModal.jsx</h4>
+  Modal criar/editar console (selects do catálogo). Depois de salvar, dispara toast de conquista.
+</div>
+<div class="file">
+  <h4>GameFormModal.jsx</h4>
+  Modal criar/editar jogo: busca autocomplete, gêneros múltiplos, checkbox
+  <strong>Versão digital</strong>, preços, sinopse. Também dispara conquistas.
+</div>
+<p class="note">
+  A confirmação de exclusão de jogos/consoles pode viver junto da page
+  (há um modal de delete usado em Games/Consoles). O importante: a page orquestra; o modal desenha o formulário.
+</p>
+
+<h2>16. Pasta <code>frontend/src/context/</code></h2>
+<div class="folder">
+  <strong>Para que serve esta pasta?</strong>
+  Estado global do React (Context API). Evita passar token e toasts de pai para filho em toda a árvore.
+</div>
+
+<div class="file">
+  <h4>AuthContext.jsx</h4>
+  Guarda <code>user</code>, <code>token</code> (localStorage), <code>login</code>,
+  <code>register</code>, <code>logout</code> e recarrega o usuário via <code>/auth/me</code>.
+</div>
+<div class="file">
+  <h4>AchievementToastContext.jsx</h4>
+  Função <code>notifyAchievements</code>: toca o som e empilha toasts no canto superior direito.
+</div>
+
+<h2>17. Pasta <code>frontend/src/services/</code></h2>
+<div class="folder">
+  <strong>Para que serve esta pasta?</strong>
+  Comunicação com a API. Isola o Axios para as pages não repetirem URL e header.
+</div>
+<div class="file">
+  <h4>api.js</h4>
+  Axios com <code>baseURL: http://localhost:3000/api</code> e interceptor que
+  injeta o Bearer token em todo request.
+</div>
+
+<h2>18. Pasta <code>frontend/src/constants/</code></h2>
+<div class="folder">
+  <strong>Para que serve esta pasta?</strong>
+  Listas fixas (não mudam com o banco). Centralizar evita digitação diferente em cada select.
+</div>
+<div class="file">
+  <h4>catalog.js</h4>
+  Arrays <code>MANUFACTURERS</code>, <code>MEDIA_TYPES</code> e <code>CONSOLES</code>
+  usados nos formulários e filtros.
+</div>
+
+<h2>19. Pasta <code>frontend/src/utils/</code></h2>
+<div class="folder">
+  <strong>Para que serve esta pasta?</strong>
+  Funções auxiliares da interface, sem JSX.
+</div>
+<div class="file">
+  <h4>achievementSound.js</h4>
+  Gera o “bling” de conquista com Web Audio API (osciladores), sem arquivo MP3.
+</div>
+
+<h2>20. Raiz, docs e Git</h2>
+<div class="file">
+  <h4>.gitignore</h4>
+  Impede commit de <code>node_modules</code>, <code>.env</code>, builds e lixo de SO/IDE.
+</div>
+<div class="file">
+  <h4>DOCUMENTACAO.md</h4>
+  Texto longo sobre arquitetura, fluxos e como apresentar o projeto.
+</div>
+<div class="file">
+  <h4>docs/SMAUG-Guia-Aluno.pdf</h4>
+  Guia didático (linguagem de faculdade) para a banca.
+</div>
+<div class="file">
+  <h4>docs/SMAUG-Pastas-e-Arquivos.pdf</h4>
+  Este documento: mapa pasta → arquivo.
+</div>
+<div class="file">
+  <h4>package.json da raiz</h4>
+  Resquício de dependências; o app real usa os <code>package.json</code> de
+  <code>backend/</code> e <code>frontend/</code>.
+</div>
+
+<h2>Como as pastas conversam (um clique)</h2>
+<pre>Tela (pages/) 
+  → api.js coloca o JWT
+  → routes/ escolhe o controller
+  → middleware confirma o usuário
+  → controller valida e chama service/Prisma
+  → PostgreSQL grava
+  → JSON volta
+  → page atualiza a lista / toast</pre>
+
+<p class="footer-note">
+  SMAUG — mapa de pastas e arquivos para estudo e apresentação.
+  Prefira explicar a pasta primeiro (“controllers atendem o pedido HTTP”) e só então o arquivo.
+</p>
+
+</body>
+</html>

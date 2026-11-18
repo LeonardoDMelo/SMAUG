@@ -1,4 +1,4 @@
-const { getOrCreateTodayQuiz } = require('../services/quizService');
+const { getOrCreateTodayQuiz, resetTodayQuiz } = require('../services/quizService');
 const { processQuizMaster } = require('../services/achievementService');
 const prisma = require('../config/prisma');
 
@@ -76,4 +76,14 @@ const submitQuiz = async (req, res) => {
   }
 };
 
-module.exports = { getTodayQuiz, submitQuiz };
+const resetQuiz = async (req, res) => {
+  try {
+    const quiz = await resetTodayQuiz(req.userId);
+    return res.status(200).json(sanitizeQuiz(quiz));
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Erro ao resetar o quiz' });
+  }
+};
+
+module.exports = { getTodayQuiz, submitQuiz, resetQuiz };

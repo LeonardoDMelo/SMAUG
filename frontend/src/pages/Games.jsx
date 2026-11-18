@@ -359,6 +359,7 @@ const Games = () => {
                   </h2>
                   <p className="mb-1 text-sm text-emerald-400">
                     {item.consoleName || item.console?.name || 'Console'}
+                    {item.isDigital ? ' · Digital' : ''}
                   </p>
                   <p className="mb-3 text-xs text-slate-500">
                     {item.saga || 'Sem saga'} · {formatGenres(item)}
