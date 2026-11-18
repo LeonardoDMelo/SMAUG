@@ -1,6 +1,7 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { HelpCircle } from 'lucide-react';
+import { HelpCircle, Shield } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { roleLabel } from '../constants/roles';
 
 const linkClass = ({ isActive }) =>
   `inline-flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition ${
@@ -10,7 +11,7 @@ const linkClass = ({ isActive }) =>
   }`;
 
 const Navbar = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, isPrimaryAdmin } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -42,12 +43,21 @@ const Navbar = () => {
               <HelpCircle className="h-4 w-4" />
               Quiz Diário
             </NavLink>
+            {isPrimaryAdmin ? (
+              <NavLink to="/users" className={linkClass}>
+                <Shield className="h-4 w-4" />
+                Usuários
+              </NavLink>
+            ) : null}
           </nav>
         </div>
         <div className="flex items-center gap-3">
-          <span className="hidden text-sm text-slate-400 sm:inline">
-            {user?.name}
-          </span>
+          <div className="hidden text-right sm:block">
+            <p className="text-sm text-slate-200">{user?.name}</p>
+            <p className="text-[11px] uppercase tracking-wide text-slate-500">
+              {roleLabel(user?.role)}
+            </p>
+          </div>
           <button
             type="button"
             onClick={handleLogout}

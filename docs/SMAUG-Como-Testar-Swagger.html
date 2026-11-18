@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>SMAUG — Como testar a API no Swagger</title>
+  <style>
+    @page { size: A4; margin: 16mm 14mm; }
+    * { box-sizing: border-box; }
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      color: #1e293b;
+      font-size: 10.8pt;
+      line-height: 1.55;
+      margin: 0;
+    }
+    h1 { font-size: 26pt; margin: 0 0 8px; color: #0f172a; }
+    h2 {
+      font-size: 15pt;
+      color: #0f172a;
+      border-bottom: 3px solid #f59e0b;
+      padding-bottom: 5px;
+      margin-top: 24px;
+      page-break-after: avoid;
+    }
+    h3 {
+      font-size: 12pt;
+      color: #334155;
+      margin: 16px 0 6px;
+      page-break-after: avoid;
+    }
+    p { margin: 7px 0; }
+    ul, ol { margin: 6px 0 12px; padding-left: 20px; }
+    li { margin: 4px 0; }
+    code {
+      font-family: Consolas, "Courier New", monospace;
+      background: #f1f5f9;
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-size: 9.5pt;
+    }
+    pre {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 11px 13px;
+      border-radius: 8px;
+      font-size: 9pt;
+      white-space: pre-wrap;
+      page-break-inside: avoid;
+    }
+    .cover {
+      min-height: 88vh;
+      padding: 48px 28px;
+      background: linear-gradient(160deg, #0f172a 0%, #1e293b 55%, #334155 100%);
+      color: #f8fafc;
+      border-radius: 8px;
+      page-break-after: always;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .cover h1 { color: #fff; font-size: 32pt; }
+    .cover .badge {
+      display: inline-block;
+      background: #f59e0b;
+      color: #0f172a;
+      font-weight: 700;
+      font-size: 9.5pt;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 6px 10px;
+      border-radius: 4px;
+      width: fit-content;
+      margin-bottom: 18px;
+    }
+    .cover .subtitle { color: #cbd5e1; font-size: 13pt; max-width: 540px; }
+    .cover .meta {
+      margin-top: 40px;
+      padding-top: 14px;
+      border-top: 1px solid #475569;
+      color: #94a3b8;
+      font-size: 10pt;
+    }
+    .callout {
+      background: #fffbeb;
+      border-left: 5px solid #f59e0b;
+      padding: 10px 12px;
+      margin: 10px 0 14px;
+      border-radius: 0 6px 6px 0;
+      page-break-inside: avoid;
+    }
+    .callout.blue {
+      background: #eff6ff;
+      border-left-color: #3b82f6;
+    }
+    .callout.green {
+      background: #ecfdf5;
+      border-left-color: #10b981;
+    }
+    .callout.red {
+      background: #fef2f2;
+      border-left-color: #ef4444;
+    }
+    .step {
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin: 10px 0;
+      page-break-inside: avoid;
+    }
+    .step .num {
+      display: inline-block;
+      background: #0f172a;
+      color: #fff;
+      font-weight: 700;
+      font-size: 10pt;
+      width: 24px;
+      height: 24px;
+      line-height: 24px;
+      text-align: center;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 14px;
+      font-size: 9.5pt;
+      page-break-inside: avoid;
+    }
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 7px 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #0f172a; color: #fff; }
+    tr:nth-child(even) td { background: #f8fafc; }
+    .toc { page-break-after: always; }
+    .footer-note {
+      margin-top: 22px;
+      padding-top: 10px;
+      border-top: 1px solid #e2e8f0;
+      color: #64748b;
+      font-size: 9pt;
+    }
+  </style>
+</head>
+<body>
+
+<section class="cover">
+  <div class="badge">Guia prático · teste de API</div>
+  <h1>Como testar o SMAUG no Swagger</h1>
+  <p class="subtitle">
+    Passo a passo para abrir a documentação interativa, fazer login,
+    autorizar o token JWT e testar as rotas da API sem Postman.
+  </p>
+  <p class="meta">
+    Endereço local: http://localhost:3000/api-docs<br />
+    Projeto: SMAUG · Express + JWT + Prisma
+  </p>
+</section>
+
+<section class="toc">
+  <h2>Sumário</h2>
+  <ol>
+    <li>O que é o Swagger?</li>
+    <li>Antes de começar (subir o backend)</li>
+    <li>Abrir a documentação</li>
+    <li>Entender a tela do Swagger</li>
+    <li>Roteiro completo de teste (do zero)</li>
+    <li>O que fazer se der erro</li>
+    <li>Checklist para a apresentação</li>
+  </ol>
+  <div class="callout blue">
+    <strong>Para quem é este guia:</strong> aluno que nunca usou Swagger.
+    Você vai clicar, colar JSON e ver a resposta da API na própria página.
+  </div>
+</section>
+
+<h2>1. O que é o Swagger?</h2>
+<p>
+  O <strong>Swagger UI</strong> é uma página web gerada a partir da especificação OpenAPI.
+  Em vez de digitar comandos no terminal ou montar requests no Postman, você:
+</p>
+<ul>
+  <li>vê todas as rotas organizadas por tags (Auth, Games, Quiz…);</li>
+  <li>preenche o body de exemplo;</li>
+  <li>clica em <strong>Execute</strong>;</li>
+  <li>lê o status HTTP e o JSON de resposta.</li>
+</ul>
+<div class="callout">
+  <strong>No SMAUG:</strong> a documentação fica em
+  <code>http://localhost:3000/api-docs</code>.
+  O arquivo técnico da API está em <code>backend/src/docs/openapi.json</code>.
+</div>
+
+<h2>2. Antes de começar</h2>
+<div class="step">
+  <p><span class="num">1</span> PostgreSQL ligado, com o banco <code>smaug</code>.</p>
+</div>
+<div class="step">
+  <p><span class="num">2</span> Backend rodando:</p>
+  <pre>cd backend
+npm run dev
+# deve aparecer: Server running on port 3000</pre>
+</div>
+<div class="step">
+  <p><span class="num">3</span> (Opcional) Frontend na 5173 — <em>não é necessário</em> para testar no Swagger.</p>
+</div>
+<div class="callout red">
+  <strong>Atenção:</strong> se a porta 3000 não estiver no ar, a página do Swagger
+  não abre. Suba o backend primeiro.
+</div>
+
+<h2>3. Abrir a documentação</h2>
+<ol>
+  <li>Abra o navegador (Chrome, Edge…).</li>
+  <li>Digite: <code>http://localhost:3000/api-docs</code></li>
+  <li>Você deve ver o título <strong>SMAUG API</strong> e uma lista de grupos (tags).</li>
+</ol>
+<p>
+  Também existe o JSON cru em <code>http://localhost:3000/api-docs.json</code>
+  (útil se alguém perguntar “onde está o OpenAPI?”).
+</p>
+
+<h2>4. Entender a tela</h2>
+<table>
+  <thead>
+    <tr><th>Elemento</th><th>O que significa</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Tags</strong> (Auth, Consoles…)</td>
+      <td>Grupos de endpoints. Clique para expandir.</td>
+    </tr>
+    <tr>
+      <td>Cores GET / POST / PUT / DELETE</td>
+      <td>Método HTTP da rota.</td>
+    </tr>
+    <tr>
+      <td>Cadeado 🔒</td>
+      <td>Rota protegida: precisa de JWT.</td>
+    </tr>
+    <tr>
+      <td><strong>Authorize</strong> (botão no topo)</td>
+      <td>Lugar para colar o token depois do login.</td>
+    </tr>
+    <tr>
+      <td><strong>Try it out</strong></td>
+      <td>Libera os campos para você editar e executar.</td>
+    </tr>
+    <tr>
+      <td><strong>Execute</strong></td>
+      <td>Envia a request de verdade para o backend.</td>
+    </tr>
+    <tr>
+      <td><strong>Responses</strong></td>
+      <td>Mostra o código (200, 401…) e o JSON devolvido.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>5. Roteiro completo de teste (do zero)</h2>
+<p>Siga nesta ordem. É o mesmo fluxo que a apresentação pode demonstrar.</p>
+
+<h3>Passo A — Registrar um usuário</h3>
+<div class="step">
+  <ol>
+    <li>Abra a tag <strong>Auth</strong>.</li>
+    <li>Clique em <code>POST /api/auth/register</code>.</li>
+    <li>Clique em <strong>Try it out</strong>.</li>
+    <li>No body, use um email novo, por exemplo:</li>
+  </ol>
+  <pre>{
+  "name": "Demo SMAUG",
+  "email": "demo@smaug.com",
+  "password": "senha123"
+}</pre>
+  <ol start="5">
+    <li>Clique em <strong>Execute</strong>.</li>
+    <li>Espere <strong>201</strong>. Na resposta aparece um campo <code>token</code>.</li>
+  </ol>
+</div>
+<div class="callout green">
+  <strong>Copie o token agora.</strong> Ele é a “pulseira” de acesso.
+  Se o email já existir, use login (Passo B) em vez de register.
+</div>
+
+<h3>Passo B — (Alternativa) Login</h3>
+<div class="step">
+  <ol>
+    <li>Abra <code>POST /api/auth/login</code> → <strong>Try it out</strong>.</li>
+    <li>Body:</li>
+  </ol>
+  <pre>{
+  "email": "demo@smaug.com",
+  "password": "senha123"
+}</pre>
+  <ol start="3">
+    <li><strong>Execute</strong> → copie o <code>token</code> da resposta 200.</li>
+  </ol>
+</div>
+
+<h3>Passo C — Autorizar o Swagger (muito importante)</h3>
+<div class="step">
+  <ol>
+    <li>No topo da página, clique no botão verde/escuro <strong>Authorize</strong>.</li>
+    <li>No campo <em>Value</em>, cole <strong>somente o token</strong>
+      (sem escrever a palavra <code>Bearer</code> — o Swagger já coloca).</li>
+    <li>Clique em <strong>Authorize</strong>, depois <strong>Close</strong>.</li>
+  </ol>
+</div>
+<div class="callout">
+  <strong>Como saber se deu certo?</strong>
+  Os cadeados das rotas protegidas ficam “fechados/autorizados”.
+  Se você esquecer este passo, quase tudo responde <strong>401</strong>.
+</div>
+
+<h3>Passo D — Confirmar quem sou eu</h3>
+<div class="step">
+  <ol>
+    <li>Em Auth, abra <code>GET /api/auth/me</code>.</li>
+    <li><strong>Try it out</strong> → <strong>Execute</strong>.</li>
+    <li>Deve voltar <strong>200</strong> com name/email (sem a senha).</li>
+  </ol>
+</div>
+
+<h3>Passo E — Criar um console</h3>
+<div class="step">
+  <ol>
+    <li>Tag <strong>Consoles</strong> → <code>POST /api/consoles</code>.</li>
+    <li><strong>Try it out</strong> e use um body assim:</li>
+  </ol>
+  <pre>{
+  "name": "PlayStation 2",
+  "releaseDate": "2000-03-04",
+  "manufacturer": "Sony",
+  "generation": 6,
+  "mediaType": "DVD",
+  "images": [],
+  "pricePaid": 350,
+  "estimatedValue": 500,
+  "rating": 9,
+  "trivia": "Console mais vendido"
+}</pre>
+  <ol start="3">
+    <li><strong>Execute</strong> → espere <strong>201</strong>.</li>
+    <li>Olhe se veio <code>unlockedAchievements</code> (ex.: primeiro console).</li>
+    <li>Copie o <code>id</code> do console se quiser testar GET/PUT depois.</li>
+  </ol>
+</div>
+
+<h3>Passo F — Criar um jogo</h3>
+<div class="step">
+  <ol>
+    <li>Tag <strong>Games</strong> → <code>POST /api/games</code>.</li>
+    <li>Body de exemplo:</li>
+  </ol>
+  <pre>{
+  "name": "Shadow of the Colossus",
+  "releaseDate": "2005-10-18",
+  "developer": "Team Ico",
+  "saga": "Colossus",
+  "genres": ["Action", "Adventure"],
+  "consoleName": "PlayStation 2",
+  "synopsis": "Wander enfrenta colossos.",
+  "trivia": null,
+  "coverUrl": null,
+  "isDigital": false,
+  "pricePaid": 120,
+  "estimatedValue": 250,
+  "rating": 10
+}</pre>
+  <ol start="3">
+    <li><strong>Execute</strong> → <strong>201</strong>.</li>
+    <li>Se marcar <code>"isDigital": true</code>, o jogo fica marcado como versão digital.</li>
+  </ol>
+</div>
+
+<h3>Passo G — Listar e filtrar</h3>
+<div class="step">
+  <ul>
+    <li><code>GET /api/consoles</code> — lista tudo.</li>
+    <li><code>GET /api/consoles?manufacturer=Sony</code> — filtro.</li>
+    <li><code>GET /api/games</code> — lista jogos.</li>
+    <li><code>GET /api/dashboard/stats</code> — totais e gráficos (dados brutos).</li>
+  </ul>
+</div>
+
+<h3>Passo H — Busca externa (autocomplete)</h3>
+<div class="step">
+  <ol>
+    <li>Tag <strong>External</strong> → <code>GET /api/external/games/search</code>.</li>
+    <li>Em <code>query</code>, digite <code>zelda</code>.</li>
+    <li><strong>Execute</strong> → deve trazer clássicos do catálogo local (e/ou RAWG/Steam).</li>
+    <li>Pegue um <code>rawgId</code> (ex.: <code>local-zelda-oot</code>) e teste
+      <code>GET /api/external/games/{id}</code>.</li>
+  </ol>
+</div>
+
+<h3>Passo I — Quiz</h3>
+<div class="step">
+  <ol>
+    <li><code>GET /api/quiz/today</code> — vê as 5 perguntas (sem gabarito).</li>
+    <li><code>POST /api/quiz/submit</code> com:</li>
+  </ol>
+  <pre>{
+  "answers": [0, 1, 2, 1, 0]
+}</pre>
+  <p>
+    Cada número é o índice da opção (0 = primeira, 1 = segunda…).
+    Ajuste conforme as perguntas que vieram no GET.
+  </p>
+  <ol start="3">
+    <li>Para demonstrar outra geração: <code>POST /api/quiz/reset</code>.</li>
+  </ol>
+</div>
+
+<h3>Passo J — Conquistas (demo)</h3>
+<div class="step">
+  <ul>
+    <li><code>GET /api/achievements</code> — vê locked/unlocked.</li>
+    <li><code>POST /api/achievements/grant</code> com <code>{"code":"QUIZ_MASTER"}</code>.</li>
+    <li><code>DELETE /api/achievements/unlocked</code> — limpa tudo (útil na demo).</li>
+  </ul>
+</div>
+
+<h2>6. O que fazer se der erro</h2>
+<table>
+  <thead>
+    <tr><th>Código / sintoma</th><th>Causa comum</th><th>Como corrigir</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Página não abre</td>
+      <td>Backend parado</td>
+      <td><code>cd backend && npm run dev</code></td>
+    </tr>
+    <tr>
+      <td><strong>401</strong></td>
+      <td>Sem Authorize, ou token errado/expirado</td>
+      <td>Faça login de novo e cole o token no Authorize</td>
+    </tr>
+    <tr>
+      <td><strong>400</strong></td>
+      <td>JSON incompleto ou inválido</td>
+      <td>Compare com o exemplo do schema no Swagger</td>
+    </tr>
+    <tr>
+      <td><strong>409</strong> no register</td>
+      <td>Email já existe</td>
+      <td>Use login ou mude o email</td>
+    </tr>
+    <tr>
+      <td><strong>404</strong></td>
+      <td>id inexistente ou de outro usuário</td>
+      <td>Liste primeiro e copie um id válido</td>
+    </tr>
+    <tr>
+      <td><strong>500</strong></td>
+      <td>Banco fora / migration faltando</td>
+      <td>Cheque PostgreSQL e <code>npx prisma migrate deploy</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="callout red">
+  <strong>Erro clássico de iniciante:</strong> colar
+  <code>Bearer eyJhbGci...</code> no Authorize.
+  Cole <em>só</em> o <code>eyJhbGci...</code>. O Swagger adiciona o Bearer sozinho.
+</div>
+
+<h2>7. Checklist para a apresentação</h2>
+<ol>
+  <li>☐ Backend no ar → abrir <code>/api-docs</code></li>
+  <li>☐ Register ou Login → copiar token</li>
+  <li>☐ Authorize</li>
+  <li>☐ GET /me (prova que o JWT funciona)</li>
+  <li>☐ POST console + POST jogo</li>
+  <li>☐ GET dashboard/stats</li>
+  <li>☐ GET external search com “zelda”</li>
+  <li>☐ Quiz today → submit ou reset</li>
+  <li>☐ Explicar 401 sem token vs 200 com token</li>
+</ol>
+
+<div class="callout green">
+  <strong>Frase pronta:</strong>
+  “O Swagger é a documentação interativa da API. Eu autentico com JWT pelo botão Authorize
+  e executo as rotas direto no navegador, sem precisar do frontend.”
+</div>
+
+<p class="footer-note">
+  SMAUG — guia de teste no Swagger UI · http://localhost:3000/api-docs
+</p>
+
+</body>
+</html>

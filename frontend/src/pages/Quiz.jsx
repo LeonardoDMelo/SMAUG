@@ -2,9 +2,11 @@ import { useEffect, useMemo, useState } from 'react';
 import { CheckCircle2, HelpCircle, RotateCcw, XCircle } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import { useAchievementToast } from '../context/AchievementToastContext';
+import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 
 const Quiz = () => {
+  const { isAdmin } = useAuth();
   const { notifyAchievements } = useAchievementToast();
   const [quiz, setQuiz] = useState(null);
   const [answers, setAnswers] = useState([]);
@@ -107,15 +109,17 @@ const Quiz = () => {
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={handleReset}
-            disabled={resetting || loading}
-            className="inline-flex items-center gap-2 rounded-lg border border-cyan-500/40 bg-slate-900 px-4 py-2 text-sm font-semibold text-cyan-300 transition hover:border-cyan-400 hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <RotateCcw className={`h-4 w-4 ${resetting ? 'animate-spin' : ''}`} />
-            {resetting ? 'Gerando...' : 'Resetar quiz (demo)'}
-          </button>
+          {isAdmin ? (
+            <button
+              type="button"
+              onClick={handleReset}
+              disabled={resetting || loading}
+              className="inline-flex items-center gap-2 rounded-lg border border-cyan-500/40 bg-slate-900 px-4 py-2 text-sm font-semibold text-cyan-300 transition hover:border-cyan-400 hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <RotateCcw className={`h-4 w-4 ${resetting ? 'animate-spin' : ''}`} />
+              {resetting ? 'Gerando...' : 'Resetar quiz (demo)'}
+            </button>
+          ) : null}
         </div>
 
         {error && (
@@ -147,7 +151,9 @@ const Quiz = () => {
                 Você acertou {score}/5 perguntas hoje!
               </h2>
               <p className="text-slate-400">
-                Volte amanhã para um novo desafio, ou use o botão de reset para demonstrar outra geração de perguntas.
+                {isAdmin
+                  ? 'Volte amanhã para um novo desafio, ou use o botão de reset para demonstrar outra geração de perguntas.'
+                  : 'Volte amanhã para um novo desafio diário.'}
               </p>
             </div>
 

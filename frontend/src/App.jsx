@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { AchievementToastProvider } from './context/AchievementToastContext';
 import PrivateRoute from './components/PrivateRoute';
+import RoleRoute from './components/RoleRoute';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
@@ -9,6 +10,7 @@ import Consoles from './pages/Consoles';
 import Games from './pages/Games';
 import Achievements from './pages/Achievements';
 import Quiz from './pages/Quiz';
+import Users from './pages/Users';
 
 const App = () => {
   return (
@@ -56,6 +58,14 @@ const App = () => {
               <PrivateRoute>
                 <Quiz />
               </PrivateRoute>
+            }
+          />
+          <Route
+            path="/users"
+            element={
+              <RoleRoute allowPrimaryAdmin>
+                <Users />
+              </RoleRoute>
             }
           />
           <Route path="*" element={<Navigate to="/" replace />} />

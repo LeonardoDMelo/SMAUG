@@ -7,6 +7,8 @@ const dashboardRoutes = require('./routes/dashboardRoutes');
 const achievementRoutes = require('./routes/achievementRoutes');
 const quizRoutes = require('./routes/quizRoutes');
 const externalGameRoutes = require('./routes/externalGameRoutes');
+const userRoutes = require('./routes/userRoutes');
+const { setupSwagger } = require('./docs/swagger');
 require('./services/achievementService');
 
 const app = express();
@@ -14,11 +16,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+setupSwagger(app);
+
 app.get('/', (req, res) => {
   res.json({ message: 'SMAUG API' });
 });
 
 app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
 app.use('/api/consoles', consoleRoutes);
 app.use('/api/games', gameRoutes);
 app.use('/api/dashboard', dashboardRoutes);

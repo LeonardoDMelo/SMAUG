@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>SMAUG — Roteiro de Apresentação da Solução</title>
+  <style>
+    @page { size: A4; margin: 15mm 13mm; }
+    * { box-sizing: border-box; }
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      color: #1e293b;
+      font-size: 10.5pt;
+      line-height: 1.5;
+      margin: 0;
+    }
+    h1 { font-size: 24pt; margin: 0 0 8px; color: #0f172a; }
+    h2 {
+      font-size: 14.5pt;
+      color: #0f172a;
+      border-bottom: 3px solid #f59e0b;
+      padding-bottom: 5px;
+      margin-top: 22px;
+      page-break-after: avoid;
+    }
+    h3 {
+      font-size: 11.5pt;
+      color: #334155;
+      margin: 14px 0 6px;
+      page-break-after: avoid;
+    }
+    p { margin: 6px 0; }
+    ul, ol { margin: 6px 0 10px; padding-left: 18px; }
+    li { margin: 3px 0; }
+    code {
+      font-family: Consolas, "Courier New", monospace;
+      background: #f1f5f9;
+      padding: 1px 4px;
+      border-radius: 3px;
+      font-size: 9pt;
+    }
+    pre {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 8.5pt;
+      white-space: pre-wrap;
+      page-break-inside: avoid;
+    }
+    .cover {
+      min-height: 88vh;
+      padding: 44px 26px;
+      background: linear-gradient(160deg, #0f172a 0%, #1e293b 55%, #334155 100%);
+      color: #f8fafc;
+      border-radius: 8px;
+      page-break-after: always;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .cover h1 { color: #fff; font-size: 30pt; }
+    .cover .badge {
+      display: inline-block;
+      background: #f59e0b;
+      color: #0f172a;
+      font-weight: 700;
+      font-size: 9.5pt;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 6px 10px;
+      border-radius: 4px;
+      width: fit-content;
+      margin-bottom: 16px;
+    }
+    .cover .subtitle { color: #cbd5e1; font-size: 12.5pt; max-width: 560px; }
+    .cover .meta {
+      margin-top: 36px;
+      padding-top: 12px;
+      border-top: 1px solid #475569;
+      color: #94a3b8;
+      font-size: 10pt;
+    }
+    .map {
+      background: #eff6ff;
+      border-left: 5px solid #3b82f6;
+      padding: 10px 12px;
+      margin: 8px 0 12px;
+      border-radius: 0 6px 6px 0;
+      page-break-inside: avoid;
+    }
+    .say {
+      background: #ecfdf5;
+      border-left: 5px solid #10b981;
+      padding: 10px 12px;
+      margin: 8px 0 12px;
+      border-radius: 0 6px 6px 0;
+      page-break-inside: avoid;
+    }
+    .do {
+      background: #fffbeb;
+      border-left: 5px solid #f59e0b;
+      padding: 10px 12px;
+      margin: 8px 0 12px;
+      border-radius: 0 6px 6px 0;
+      page-break-inside: avoid;
+    }
+    .warn {
+      background: #fef2f2;
+      border-left: 5px solid #ef4444;
+      padding: 10px 12px;
+      margin: 8px 0 12px;
+      border-radius: 0 6px 6px 0;
+      page-break-inside: avoid;
+    }
+    .section-card {
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin: 10px 0;
+      page-break-inside: avoid;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 8px 0 12px;
+      font-size: 9.3pt;
+      page-break-inside: avoid;
+    }
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 6px 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #0f172a; color: #fff; }
+    tr:nth-child(even) td { background: #f8fafc; }
+    .toc { page-break-after: always; }
+    .time {
+      display: inline-block;
+      background: #0f172a;
+      color: #f8fafc;
+      font-size: 8.5pt;
+      padding: 2px 7px;
+      border-radius: 999px;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+    .footer-note {
+      margin-top: 18px;
+      padding-top: 8px;
+      border-top: 1px solid #e2e8f0;
+      color: #64748b;
+      font-size: 9pt;
+    }
+  </style>
+</head>
+<body>
+
+<section class="cover">
+  <div class="badge">Roteiro oral · apresentação da solução</div>
+  <h1>SMAUG</h1>
+  <p class="subtitle">
+    Script completo para apresentar o sistema seguindo o roteiro acadêmico pedido:
+    backend, teste de API, frontend, demos, rotas protegidas, mensagens e fechamento.
+  </p>
+  <p class="meta">
+    Projeto: gerenciador de coleção de consoles e jogos<br />
+    Stack: React + Express + Prisma + PostgreSQL + Swagger<br />
+    Tempo sugerido total: 12–18 minutos
+  </p>
+</section>
+
+<section class="toc">
+  <h2>Como usar este PDF</h2>
+  <p>
+    O roteiro original fala em “campanha”, “aposta” e “agendamento”.
+    No <strong>SMAUG</strong> os equivalentes da demonstração são:
+  </p>
+  <table>
+    <thead>
+      <tr><th>No roteiro da disciplina</th><th>No SMAUG (o que você demonstra)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Ideia de agendamento</td><td>Quiz diário (reset por dia UTC + botão demo)</td></tr>
+      <tr><td>Criar campanha</td><td>Criar um <strong>console</strong></td></tr>
+      <tr><td>Criar aposta</td><td>Criar um <strong>jogo</strong> (com busca e versão digital)</td></tr>
+      <tr><td>Resultado da campanha</td><td>Resultado do <strong>quiz</strong> + conquistas/toast + dashboard</td></tr>
+      <tr><td>Perfil de usuários</td><td>Registro/login, <code>/auth/me</code>, dados do usuário na Navbar</td></tr>
+    </tbody>
+  </table>
+  <div class="say">
+    <strong>Dica de fala:</strong> “Adaptei o fluxo do roteiro ao domínio do meu sistema:
+    coleção de consoles/jogos, quiz diário e conquistas.”
+  </div>
+  <ol>
+    <li>Organização do back-end</li>
+    <li>Teste da API (Swagger)</li>
+    <li>Front-end (tecnologia e organização)</li>
+    <li>Ideia de “agendamento” (quiz diário)</li>
+    <li>Demo: criar console (= campanha)</li>
+    <li>Demo: criar jogo (= aposta)</li>
+    <li>Demo: resultado (quiz/conquistas/dashboard)</li>
+    <li>Logout e rotas protegidas</li>
+    <li>Perfil de usuários</li>
+    <li>Mensagens de sucesso e erro</li>
+    <li>Forçar um erro ao vivo</li>
+    <li>Pontos fortes e melhorias</li>
+  </ol>
+</section>
+
+<!-- 1 BACKEND -->
+<h2>1. Organização do back-end <span class="time">~3 min</span></h2>
+
+<div class="say">
+  <strong>Fale:</strong>
+  “Separei o backend em camadas: rotas só encaminham, controllers atendem o HTTP,
+  services guardam regras reaproveitáveis, e o Prisma fala com o PostgreSQL.”
+</div>
+
+<h3>1.1 Schema de dados</h3>
+<div class="do">
+  <strong>Mostre:</strong> <code>backend/prisma/schema.prisma</code>
+</div>
+<ul>
+  <li><code>User</code> — conta (email único, senha hasheada)</li>
+  <li><code>Console</code> — hardware da coleção, ligado ao <code>userId</code></li>
+  <li><code>Game</code> — jogo com <code>genres[]</code>, <code>consoleName</code>, <code>isDigital</code></li>
+  <li><code>Achievement</code> + <code>UserAchievement</code> — catálogo e desbloqueios</li>
+  <li><code>DailyQuiz</code> — um quiz por usuário por dia</li>
+</ul>
+<div class="say">
+  <strong>Fale:</strong>
+  “Todo dado sensível à coleção é isolado por usuário. Um id de outro usuário responde 404.”
+</div>
+
+<h3>1.2 Controllers</h3>
+<div class="do">
+  <strong>Mostre a pasta:</strong> <code>backend/src/controllers/</code>
+</div>
+<table>
+  <thead><tr><th>Arquivo</th><th>Responsabilidade</th></tr></thead>
+  <tbody>
+    <tr><td><code>authController.js</code></td><td>register, login, me</td></tr>
+    <tr><td><code>consoleController.js</code></td><td>CRUD de consoles + conquistas no create</td></tr>
+    <tr><td><code>gameController.js</code></td><td>CRUD de jogos + isDigital + conquistas</td></tr>
+    <tr><td><code>dashboardController.js</code></td><td>estatísticas agregadas</td></tr>
+    <tr><td><code>achievementController.js</code></td><td>listar / grant / revoke (demo)</td></tr>
+    <tr><td><code>quizController.js</code></td><td>today, submit, reset</td></tr>
+    <tr><td><code>externalGameController.js</code></td><td>busca catálogo + RAWG + Steam</td></tr>
+  </tbody>
+</table>
+<div class="say">
+  <strong>Fale:</strong>
+  “O controller valida entrada, chama Prisma/service e devolve status HTTP + JSON.”
+</div>
+
+<h3>1.3 Rotas</h3>
+<div class="do">
+  <strong>Mostre:</strong> <code>backend/src/app.js</code> e a pasta <code>routes/</code>
+</div>
+<pre>/api/auth
+/api/consoles
+/api/games
+/api/dashboard
+/api/achievements
+/api/quiz
+/api/external</pre>
+<div class="say">
+  <strong>Fale:</strong>
+  “As routes só mapeiam URL → função. Quase todas passam pelo <code>authMiddleware</code>,
+  que valida o JWT e coloca <code>req.userId</code>.”
+</div>
+
+<h3>1.4 Bibliotecas usadas</h3>
+<table>
+  <thead><tr><th>Biblioteca</th><th>Para quê</th></tr></thead>
+  <tbody>
+    <tr><td>Express</td><td>Servidor HTTP e rotas</td></tr>
+    <tr><td>Prisma</td><td>ORM / acesso ao PostgreSQL</td></tr>
+    <tr><td>bcryptjs</td><td>Hash de senha</td></tr>
+    <tr><td>jsonwebtoken</td><td>Token de sessão (7 dias)</td></tr>
+    <tr><td>cors + dotenv</td><td>Front em outra porta + variáveis de ambiente</td></tr>
+    <tr><td>axios</td><td>Chamadas à RAWG/Steam</td></tr>
+    <tr><td>swagger-ui-express</td><td>Documentação e teste interativo da API</td></tr>
+  </tbody>
+</table>
+
+<!-- 2 SWAGGER -->
+<h2>2. Teste da aplicação (Swagger) <span class="time">~2–3 min</span></h2>
+<div class="map">
+  <strong>Equivalente do roteiro:</strong> “ferramenta de teste de APIs” → Swagger UI.
+</div>
+<div class="do">
+  <strong>Faça ao vivo:</strong>
+  <ol>
+    <li>Abra <code>http://localhost:3000/api-docs</code></li>
+    <li><code>POST /api/auth/login</code> (ou register) → copie o <code>token</code></li>
+    <li>Botão <strong>Authorize</strong> → cole só o token</li>
+    <li><code>GET /api/auth/me</code> → 200</li>
+    <li>Mostre 1 rota protegida sem token (logout do Authorize) → 401</li>
+    <li>Autorize de novo e execute um GET de consoles/jogos</li>
+  </ol>
+</div>
+<div class="say">
+  <strong>Fale:</strong>
+  “Com o Swagger eu documento e testo a API sem depender do frontend.
+  O cadeado indica rota protegida por JWT.”
+</div>
+<div class="warn">
+  Guia detalhado: <code>docs/SMAUG-Como-Testar-Swagger.pdf</code>
+</div>
+
+<!-- 3 FRONT -->
+<h2>3. Front-end <span class="time">~2 min</span></h2>
+
+<h3>3.1 Tecnologia</h3>
+<ul>
+  <li><strong>React 19</strong> + <strong>Vite</strong> (SPA)</li>
+  <li><strong>React Router</strong> para páginas</li>
+  <li><strong>Tailwind CSS</strong> para estilo</li>
+  <li><strong>Axios</strong> para a API (interceptor JWT)</li>
+  <li><strong>Recharts</strong> no Dashboard</li>
+</ul>
+
+<h3>3.2 Organização do código</h3>
+<pre>frontend/src/
+  pages/        → telas (Login, Games, Quiz…)
+  components/   → Navbar, PrivateRoute, modais
+  context/      → Auth + toast de conquistas
+  services/     → api.js (Axios)
+  constants/    → catálogo de consoles/fabricantes
+  utils/        → som da conquista</pre>
+<div class="say">
+  <strong>Fale:</strong>
+  “Pages orquestram a tela; components reutilizam UI; contexts guardam estado global de login e notificações.”
+</div>
+<div class="do">
+  <strong>Mostre:</strong> <code>App.jsx</code> com rotas públicas vs <code>PrivateRoute</code>.
+</div>
+
+<!-- 4 AGENDAMENTO -->
+<h2>4. Ideia de agendamento na interface <span class="time">~1–1,5 min</span></h2>
+<div class="map">
+  <strong>No roteiro:</strong> “explique como foi a sua ideia de agendamento”.<br />
+  <strong>No SMAUG:</strong> o “agendamento” é o <strong>Quiz Diário</strong>.
+</div>
+<div class="say">
+  <strong>Fale:</strong>
+  “Cada usuário tem um quiz por dia. O backend define o ‘hoje’ em UTC
+  (<code>getTodayUtcRange</code> em <code>quizService.js</code>). Se já existe registro do dia, reaproveita;
+  senão cria 5 perguntas sorteadas. Na interface mostro o quiz do dia e o resultado;
+  para a apresentação há o botão <em>Resetar quiz (demo)</em>, que gera outro conjunto na hora.”
+</div>
+<div class="do">
+  <strong>Mostre:</strong> tela <code>/quiz</code> + trecho de <code>getTodayUtcRange</code>.
+</div>
+
+<!-- 5 CONSOLE = CAMPANHA -->
+<h2>5. Demonstração: criar um console <span class="time">~1–1,5 min</span></h2>
+<div class="map">
+  <strong>Equivalente a “criar uma campanha”.</strong>
+</div>
+<div class="do">
+  <strong>Faça:</strong>
+  <ol>
+    <li>Entre logado → menu <strong>Consoles</strong></li>
+    <li>Novo console → preencha nome, fabricante, geração, mídia, preços, nota</li>
+    <li>Salve</li>
+    <li>Aponte o card na lista</li>
+    <li>Se for o primeiro console, mostre o <strong>toast de conquista</strong> + som</li>
+  </ol>
+</div>
+<div class="say">
+  <strong>Fale:</strong>
+  “A criação dispara o backend, grava no PostgreSQL e pode desbloquear conquista.
+  A resposta traz <code>unlockedAchievements</code> e o frontend notifica.”
+</div>
+
+<!-- 6 JOGO = APOSTA -->
+<h2>6. Demonstração: criar um jogo <span class="time">~1,5–2 min</span></h2>
+<div class="map">
+  <strong>Equivalente a “criar uma aposta”.</strong>
+</div>
+<div class="do">
+  <strong>Faça:</strong>
+  <ol>
+    <li>Menu <strong>Jogos</strong> → Novo</li>
+    <li>Busque “zelda” (ou outro clássico) no autocomplete</li>
+    <li>Selecione → veja nome, console, gêneros e sinopse preenchidos</li>
+    <li>Marque ou não <strong>Versão digital</strong></li>
+    <li>Complete preços/nota → Salvar</li>
+    <li>Mostre o card com “· Digital” se marcou</li>
+  </ol>
+</div>
+<div class="say">
+  <strong>Fale:</strong>
+  “O jogo pode existir mesmo sem o console físico cadastrado.
+  A busca prioriza clássicos de console e tem fallback se a RAWG estiver fora.”
+</div>
+
+<!-- 7 RESULTADO -->
+<h2>7. Resultado (quiz / conquistas / dashboard) <span class="time">~1,5 min</span></h2>
+<div class="map">
+  <strong>Equivalente a “comportamento do resultado de uma campanha”.</strong>
+</div>
+<div class="do">
+  <strong>Faça uma destas demos (ou as duas se der tempo):</strong>
+  <ol>
+    <li><strong>Quiz:</strong> responda as 5 perguntas → tela de resultado X/5 → se gabaritar, conquista QUIZ_MASTER</li>
+    <li><strong>Dashboard:</strong> mostre totais e gráficos atualizados após os cadastros</li>
+    <li><strong>Conquistas:</strong> mostre locked/unlocked na página Conquistas</li>
+  </ol>
+</div>
+<div class="say">
+  <strong>Fale:</strong>
+  “O resultado não é só um número: a interface mostra feedback visual,
+  e o sistema pode liberar conquista com notificação estilo console.”
+</div>
+
+<!-- 8 LOGOUT -->
+<h2>8. Deslogar e tentar rotas protegidas <span class="time">~1 min</span></h2>
+<div class="do">
+  <strong>Faça:</strong>
+  <ol>
+    <li>Clique em <strong>Sair</strong> na Navbar</li>
+    <li>Tente abrir manualmente <code>http://localhost:5173/</code>, <code>/games</code>, <code>/quiz</code></li>
+    <li>Mostre o redirecionamento para <code>/login</code> (<code>PrivateRoute</code>)</li>
+    <li>(Opcional no Swagger) remova o Authorize e chame <code>GET /api/games</code> → <strong>401</strong></li>
+  </ol>
+</div>
+<div class="say">
+  <strong>Fale:</strong>
+  “No frontend o PrivateRoute bloqueia a UI.
+   No backend o middleware bloqueia a API mesmo se alguém chamar direto.”
+</div>
+
+<!-- 9 PERFIL -->
+<h2>9. Perfil de usuários <span class="time">~1 min</span></h2>
+<div class="map">
+  <strong>O que existe hoje no SMAUG:</strong> fluxo completo de conta, sem tela “editar perfil” dedicada.
+</div>
+<div class="do">
+  <strong>Mostre:</strong>
+  <ul>
+    <li>Tela de <strong>Register</strong> e <strong>Login</strong></li>
+    <li>Nome do usuário na Navbar após login</li>
+    <li>No Swagger: <code>GET /api/auth/me</code> devolvendo id, name, email, createdAt</li>
+    <li>Isolamento: cada usuário só vê a própria coleção</li>
+  </ul>
+</div>
+<div class="say">
+  <strong>Fale:</strong>
+  “O perfil autenticado fica no AuthContext. A senha nunca volta nas respostas.
+   Como melhoria futura, dá para criar uma página de edição de nome/senha.”
+</div>
+
+<!-- 10 MENSAGENS -->
+<h2>10. Esquema de mensagens de sucesso e erro <span class="time">~1 min</span></h2>
+<table>
+  <thead><tr><th>Tipo</th><th>Onde aparece</th><th>Exemplo</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>Erro de formulário / API</td>
+      <td>Banner vermelho nas pages/modais</td>
+      <td>“Credenciais inválidas”, “Campos obrigatórios ausentes”</td>
+    </tr>
+    <tr>
+      <td>Erro de validação local</td>
+      <td>Antes de enviar</td>
+      <td>“Adicione pelo menos um gênero”</td>
+    </tr>
+    <tr>
+      <td>Sucesso de conquista</td>
+      <td>Toast canto superior direito + som</td>
+      <td>“Conquista desbloqueada”</td>
+    </tr>
+    <tr>
+      <td>Mensagem admin (conquistas)</td>
+      <td>Texto de feedback na página</td>
+      <td>grant / limpar conquistas</td>
+    </tr>
+    <tr>
+      <td>Resultado de quiz</td>
+      <td>Card verde + acertos/erros por pergunta</td>
+      <td>“Você acertou X/5”</td>
+    </tr>
+    <tr>
+      <td>Backend</td>
+      <td>JSON <code>{ error: "..." }</code> + status HTTP</td>
+      <td>400, 401, 404, 409, 500</td>
+    </tr>
+  </tbody>
+</table>
+<div class="say">
+  <strong>Fale:</strong>
+  “Padronizei erros no backend com campo <code>error</code>.
+   O frontend lê <code>err.response.data.error</code> e mostra na interface.”
+</div>
+
+<!-- 11 FORÇAR ERRO -->
+<h2>11. Demonstração forçando erro <span class="time">~1 min</span></h2>
+<div class="do">
+  <strong>Escolha 1 ou 2 ao vivo (fáceis e claros):</strong>
+  <ol>
+    <li><strong>Login errado:</strong> senha inválida → banner vermelho “Credenciais inválidas”</li>
+    <li><strong>Register duplicado:</strong> mesmo email → 409 “Email já cadastrado”</li>
+    <li><strong>Jogo sem gênero:</strong> tentar salvar sem adicionar gênero → erro local</li>
+    <li><strong>API sem token:</strong> Swagger sem Authorize em <code>GET /api/games</code> → 401</li>
+    <li><strong>Quiz já respondido:</strong> submit de novo sem reset → 400</li>
+  </ol>
+</div>
+<div class="warn">
+  Evite derrubar o PostgreSQL na apresentação. Prefira erro de negócio/validação.
+</div>
+
+<!-- 12 FECHAMENTO -->
+<h2>12. Pontos fortes e pontos a melhorar <span class="time">~1–2 min</span></h2>
+
+<h3>Pontos fortes</h3>
+<ul>
+  <li>Arquitetura clara: routes → controllers → services → Prisma</li>
+  <li>Segurança básica sólida: bcrypt, JWT, isolamento por <code>userId</code>, rotas privadas</li>
+  <li>Experiência “gamer”: conquistas com toast + som</li>
+  <li>Quiz diário com variação de perguntas e reset para demo</li>
+  <li>Autocomplete de jogos com catálogo de console + fallback externo</li>
+  <li>Swagger documentando e permitindo testar a API</li>
+  <li>Dashboard com métricas reais da coleção</li>
+</ul>
+
+<h3>Pontos a melhorar</h3>
+<ul>
+  <li>Página dedicada de perfil (editar nome/senha, avatar)</li>
+  <li>Upload real de imagens (hoje usa URL)</li>
+  <li>Testes automatizados (unit/integration) além do Swagger manual</li>
+  <li>Deploy em nuvem (API + banco + frontend)</li>
+  <li>Paginação e busca textual nas listas grandes</li>
+  <li>Timezone configurável no quiz (hoje usa UTC)</li>
+  <li>Mais conquistas e perguntas dinâmicas por dificuldade</li>
+</ul>
+
+<div class="say">
+  <strong>Frase de fechamento:</strong>
+  “O SMAUG entrega um CRUD autenticado completo, com diferenciais de conquistas,
+  quiz diário e integração de busca — e ainda deixa caminho claro para evoluir perfil,
+  mídia e deploy.”
+</div>
+
+<h2>Ordem sugerida no dia da banca</h2>
+<ol>
+  <li>Abrir frontend logado + Swagger em abas separadas</li>
+  <li>Falar backend (schema → controllers → routes → libs) apontando pastas</li>
+  <li>Swagger: login + Authorize + 1 GET protegido</li>
+  <li>Frontend: estrutura + PrivateRoute</li>
+  <li>Quiz (agendamento) em 30–40s</li>
+  <li>Criar console → criar jogo → ver dashboard/conquista</li>
+  <li>Logout → tentar /games → login de novo ou 401 no Swagger</li>
+  <li>Forçar 1 erro → falar mensagens</li>
+  <li>Fechar com fortes/melhorias</li>
+</ol>
+
+<div class="section-card">
+  <h3>Checklist rápido antes de começar</h3>
+  <ul>
+    <li>☐ PostgreSQL no ar</li>
+    <li>☐ <code>backend</code>: <code>npm run dev</code> → :3000</li>
+    <li>☐ <code>frontend</code>: <code>npm run dev</code> → :5173</li>
+    <li>☐ Conta de demo criada</li>
+    <li>☐ Aba Swagger aberta: <code>/api-docs</code></li>
+    <li>☐ Som do navegador ligado (toast de conquista)</li>
+  </ul>
+</div>
+
+<p class="footer-note">
+  SMAUG — roteiro de apresentação da solução adaptado ao domínio do projeto.
+  Materiais de apoio: DOCUMENTACAO.md · SMAUG-Como-Testar-Swagger.pdf · SMAUG-Pastas-e-Arquivos.pdf
+</p>
+
+</body>
+</html>

@@ -1,5 +1,6 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import api from '../services/api';
+import { isAdminRole, isPrimaryAdminRole } from '../constants/roles';
 
 const AuthContext = createContext(null);
 
@@ -52,20 +53,23 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const value = useMemo(
+    () => ({
+      user,
+      token,
+      loading,
+      isAuthenticated: Boolean(token && user),
+      isAdmin: isAdminRole(user?.role),
+      isPrimaryAdmin: isPrimaryAdminRole(user?.role),
+      login,
+      register,
+      logout,
+    }),
+    [user, token, loading]
+  );
+
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        token,
-        loading,
-        isAuthenticated: Boolean(token && user),
-        login,
-        register,
-        logout,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
   );
 };
 

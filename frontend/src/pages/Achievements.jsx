@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Gamepad2, Lock, Trophy, Tv } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import { useAchievementToast } from '../context/AchievementToastContext';
+import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 
 const ICONS = {
@@ -20,6 +21,7 @@ const formatDate = (value) => {
 };
 
 const Achievements = () => {
+  const { isAdmin } = useAuth();
   const { notifyAchievements } = useAchievementToast();
   const [achievements, setAchievements] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -109,39 +111,41 @@ const Achievements = () => {
           </div>
         </div>
 
-        <section className="mb-6 rounded-xl border border-amber-500/30 bg-slate-900 p-4">
-          <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <h2 className="text-sm font-semibold uppercase tracking-wider text-amber-400">
-                Admin / Teste
-              </h2>
-              <p className="text-xs text-slate-400">
-                Limpe ou ative conquistas para validar a interface
-              </p>
+        {isAdmin ? (
+          <section className="mb-6 rounded-xl border border-amber-500/30 bg-slate-900 p-4">
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 className="text-sm font-semibold uppercase tracking-wider text-amber-400">
+                  Admin / Teste
+                </h2>
+                <p className="text-xs text-slate-400">
+                  Limpe ou ative conquistas para validar a interface
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  disabled={adminLoading}
+                  onClick={handleClear}
+                  className="rounded-lg border border-slate-700 px-3 py-2 text-sm text-slate-200 hover:bg-slate-800 disabled:opacity-60"
+                >
+                  Limpar todas
+                </button>
+                <button
+                  type="button"
+                  disabled={adminLoading}
+                  onClick={handleGrantAll}
+                  className="rounded-lg bg-amber-500 px-3 py-2 text-sm font-bold text-slate-950 hover:bg-amber-400 disabled:opacity-60"
+                >
+                  Ativar todas
+                </button>
+              </div>
             </div>
-            <div className="flex flex-wrap gap-2">
-              <button
-                type="button"
-                disabled={adminLoading}
-                onClick={handleClear}
-                className="rounded-lg border border-slate-700 px-3 py-2 text-sm text-slate-200 hover:bg-slate-800 disabled:opacity-60"
-              >
-                Limpar todas
-              </button>
-              <button
-                type="button"
-                disabled={adminLoading}
-                onClick={handleGrantAll}
-                className="rounded-lg bg-amber-500 px-3 py-2 text-sm font-bold text-slate-950 hover:bg-amber-400 disabled:opacity-60"
-              >
-                Ativar todas
-              </button>
-            </div>
-          </div>
-          {adminMessage && (
-            <p className="text-sm text-amber-300">{adminMessage}</p>
-          )}
-        </section>
+            {adminMessage && (
+              <p className="text-sm text-amber-300">{adminMessage}</p>
+            )}
+          </section>
+        ) : null}
 
         {error && (
           <p className="mb-4 rounded-lg border border-red-500/40 bg-red-950/50 px-3 py-2 text-sm text-red-300">
@@ -205,18 +209,20 @@ const Achievements = () => {
                     </p>
                   )}
 
-                  <button
-                    type="button"
-                    disabled={adminLoading}
-                    onClick={() => handleToggle(item)}
-                    className={`w-full rounded-lg px-3 py-2 text-sm font-semibold transition disabled:opacity-60 ${
-                      unlocked
-                        ? 'border border-slate-600 text-slate-300 hover:bg-slate-800'
-                        : 'bg-amber-500 text-slate-950 hover:bg-amber-400'
-                    }`}
-                  >
-                    {unlocked ? 'Desativar (teste)' : 'Ativar (teste)'}
-                  </button>
+                  {isAdmin ? (
+                    <button
+                      type="button"
+                      disabled={adminLoading}
+                      onClick={() => handleToggle(item)}
+                      className={`w-full rounded-lg px-3 py-2 text-sm font-semibold transition disabled:opacity-60 ${
+                        unlocked
+                          ? 'border border-slate-600 text-slate-300 hover:bg-slate-800'
+                          : 'bg-amber-500 text-slate-950 hover:bg-amber-400'
+                      }`}
+                    >
+                      {unlocked ? 'Desativar (teste)' : 'Ativar (teste)'}
+                    </button>
+                  ) : null}
                 </article>
               );
             })}

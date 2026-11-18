@@ -71,6 +71,8 @@ npm run dev
 
 API em **http://localhost:3000**.
 
+Documentação interativa (Swagger): **http://localhost:3000/api-docs**
+
 O seed cria só as conquistas (`FIRST_CONSOLE`, `FIRST_GAME`, `COLLECTOR_10`, `QUIZ_MASTER`). **Não existe usuário padrão** — registre uma conta na tela de cadastro.
 
 ### 2. Frontend
@@ -128,6 +130,7 @@ smaug/
 ```
 
 Mapa pasta a pasta: [`docs/SMAUG-Pastas-e-Arquivos.pdf`](docs/SMAUG-Pastas-e-Arquivos.pdf)  
+Como testar no Swagger: [`docs/SMAUG-Como-Testar-Swagger.pdf`](docs/SMAUG-Como-Testar-Swagger.pdf)  
 Documentação completa para estudo/apresentação: [`DOCUMENTACAO.md`](DOCUMENTACAO.md)
 
 ---

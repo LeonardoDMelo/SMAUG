@@ -1,0 +1,642 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "SMAUG API",
+    "version": "1.0.0",
+    "description": "API do gerenciador de coleção de consoles e jogos. Use Authorize com o JWT obtido em /api/auth/login ou /api/auth/register."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Servidor local"
+    }
+  ],
+  "tags": [
+    { "name": "Auth", "description": "Registro, login e usuário logado" },
+    { "name": "Consoles", "description": "CRUD de consoles" },
+    { "name": "Games", "description": "CRUD de jogos" },
+    { "name": "Dashboard", "description": "Estatísticas da coleção" },
+    { "name": "Achievements", "description": "Conquistas do usuário" },
+    { "name": "Quiz", "description": "Quiz diário" },
+    { "name": "External", "description": "Busca externa de jogos (RAWG/Steam/catálogo)" }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Cole apenas o token (sem a palavra Bearer). Exemplo: eyJhbGciOi..."
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": { "type": "string" },
+          "details": { "type": "string" }
+        }
+      },
+      "AuthResponse": {
+        "type": "object",
+        "properties": {
+          "token": { "type": "string" },
+          "user": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "name": { "type": "string" },
+              "email": { "type": "string" },
+              "createdAt": { "type": "string", "format": "date-time" }
+            }
+          }
+        }
+      },
+      "ConsoleInput": {
+        "type": "object",
+        "required": [
+          "name",
+          "releaseDate",
+          "manufacturer",
+          "generation",
+          "mediaType",
+          "pricePaid",
+          "estimatedValue",
+          "rating"
+        ],
+        "properties": {
+          "name": { "type": "string", "example": "PlayStation 2" },
+          "releaseDate": { "type": "string", "format": "date", "example": "2000-03-04" },
+          "manufacturer": { "type": "string", "example": "Sony" },
+          "generation": { "type": "integer", "example": 6 },
+          "mediaType": { "type": "string", "example": "DVD" },
+          "images": {
+            "type": "array",
+            "items": { "type": "string" },
+            "example": ["https://example.com/ps2.jpg"]
+          },
+          "pricePaid": { "type": "number", "example": 350 },
+          "estimatedValue": { "type": "number", "example": 500 },
+          "rating": { "type": "integer", "minimum": 1, "maximum": 10, "example": 9 },
+          "trivia": { "type": "string", "example": "O console mais vendido da história" }
+        }
+      },
+      "GameInput": {
+        "type": "object",
+        "required": [
+          "name",
+          "releaseDate",
+          "developer",
+          "genres",
+          "consoleName",
+          "pricePaid",
+          "estimatedValue",
+          "rating"
+        ],
+        "properties": {
+          "name": { "type": "string", "example": "Shadow of the Colossus" },
+          "releaseDate": { "type": "string", "format": "date", "example": "2005-10-18" },
+          "developer": { "type": "string", "example": "Team Ico" },
+          "saga": { "type": "string", "nullable": true, "example": "Colossus" },
+          "genres": {
+            "type": "array",
+            "items": { "type": "string" },
+            "example": ["Action", "Adventure"]
+          },
+          "consoleName": { "type": "string", "example": "PlayStation 2" },
+          "synopsis": { "type": "string", "nullable": true },
+          "trivia": { "type": "string", "nullable": true },
+          "coverUrl": { "type": "string", "nullable": true },
+          "isDigital": { "type": "boolean", "example": false },
+          "pricePaid": { "type": "number", "example": 120 },
+          "estimatedValue": { "type": "number", "example": 250 },
+          "rating": { "type": "integer", "minimum": 1, "maximum": 10, "example": 10 }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Health check da API",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "API online",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string", "example": "SMAUG API" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Registrar usuário",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "email", "password"],
+                "properties": {
+                  "name": { "type": "string", "example": "Leonardo" },
+                  "email": { "type": "string", "example": "leo@email.com" },
+                  "password": { "type": "string", "example": "senha123" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Usuário criado",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AuthResponse" }
+              }
+            }
+          },
+          "400": { "description": "Campos obrigatórios ausentes" },
+          "409": { "description": "Email já cadastrado" }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Login",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": { "type": "string", "example": "leo@email.com" },
+                  "password": { "type": "string", "example": "senha123" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login ok — copie o token",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AuthResponse" }
+              }
+            }
+          },
+          "401": { "description": "Credenciais inválidas" }
+        }
+      }
+    },
+    "/api/auth/me": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Usuário logado",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Dados do usuário" },
+          "401": { "description": "Token inválido ou ausente" }
+        }
+      }
+    },
+    "/api/consoles": {
+      "get": {
+        "tags": ["Consoles"],
+        "summary": "Listar consoles",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "manufacturer",
+            "in": "query",
+            "schema": { "type": "string" },
+            "example": "Sony"
+          },
+          {
+            "name": "generation",
+            "in": "query",
+            "schema": { "type": "integer" },
+            "example": 6
+          },
+          {
+            "name": "mediaType",
+            "in": "query",
+            "schema": { "type": "string" },
+            "example": "DVD"
+          }
+        ],
+        "responses": {
+          "200": { "description": "Lista de consoles" },
+          "401": { "description": "Não autenticado" }
+        }
+      },
+      "post": {
+        "tags": ["Consoles"],
+        "summary": "Criar console",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ConsoleInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Console criado (pode incluir unlockedAchievements)" },
+          "400": { "description": "Campos obrigatórios ausentes" }
+        }
+      }
+    },
+    "/api/consoles/{id}": {
+      "get": {
+        "tags": ["Consoles"],
+        "summary": "Buscar console por id",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Console encontrado" },
+          "404": { "description": "Não encontrado" }
+        }
+      },
+      "put": {
+        "tags": ["Consoles"],
+        "summary": "Atualizar console",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ConsoleInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Atualizado" },
+          "404": { "description": "Não encontrado" }
+        }
+      },
+      "delete": {
+        "tags": ["Consoles"],
+        "summary": "Remover console",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "204": { "description": "Removido" },
+          "404": { "description": "Não encontrado" }
+        }
+      }
+    },
+    "/api/games": {
+      "get": {
+        "tags": ["Games"],
+        "summary": "Listar jogos",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "genres",
+            "in": "query",
+            "schema": { "type": "string" },
+            "description": "Um ou mais gêneros",
+            "example": "RPG"
+          },
+          {
+            "name": "consoleNames",
+            "in": "query",
+            "schema": { "type": "string" },
+            "example": "PlayStation 2"
+          },
+          {
+            "name": "saga",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "developer",
+            "in": "query",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Lista de jogos" }
+        }
+      },
+      "post": {
+        "tags": ["Games"],
+        "summary": "Criar jogo",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/GameInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Jogo criado (pode incluir unlockedAchievements)" },
+          "400": { "description": "Campos obrigatórios ausentes" }
+        }
+      }
+    },
+    "/api/games/{id}": {
+      "get": {
+        "tags": ["Games"],
+        "summary": "Buscar jogo por id",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Jogo encontrado" },
+          "404": { "description": "Não encontrado" }
+        }
+      },
+      "put": {
+        "tags": ["Games"],
+        "summary": "Atualizar jogo",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/GameInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Atualizado" },
+          "404": { "description": "Não encontrado" }
+        }
+      },
+      "delete": {
+        "tags": ["Games"],
+        "summary": "Remover jogo",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "204": { "description": "Removido" },
+          "404": { "description": "Não encontrado" }
+        }
+      }
+    },
+    "/api/dashboard/stats": {
+      "get": {
+        "tags": ["Dashboard"],
+        "summary": "Estatísticas da coleção",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Totais e distribuições",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "totalConsoles": { "type": "integer" },
+                    "totalGames": { "type": "integer" },
+                    "totalSpent": { "type": "number" },
+                    "totalEstimatedValue": { "type": "number" },
+                    "gamesByConsole": { "type": "array", "items": { "type": "object" } },
+                    "gamesByGenre": { "type": "array", "items": { "type": "object" } }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/achievements": {
+      "get": {
+        "tags": ["Achievements"],
+        "summary": "Listar conquistas",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Lista com flag unlocked" }
+        }
+      }
+    },
+    "/api/achievements/grant": {
+      "post": {
+        "tags": ["Achievements"],
+        "summary": "Ativar uma conquista (demo)",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["code"],
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "example": "FIRST_GAME",
+                    "description": "FIRST_CONSOLE | FIRST_GAME | COLLECTOR_10 | QUIZ_MASTER"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Conquista ativada" },
+          "404": { "description": "Código inexistente" }
+        }
+      }
+    },
+    "/api/achievements/grant-all": {
+      "post": {
+        "tags": ["Achievements"],
+        "summary": "Ativar todas as conquistas (demo)",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Todas ativadas" }
+        }
+      }
+    },
+    "/api/achievements/unlocked": {
+      "delete": {
+        "tags": ["Achievements"],
+        "summary": "Limpar conquistas desbloqueadas (demo)",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Limpeza feita" }
+        }
+      }
+    },
+    "/api/achievements/unlocked/{code}": {
+      "delete": {
+        "tags": ["Achievements"],
+        "summary": "Revogar uma conquista (demo)",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "example": "FIRST_GAME"
+          }
+        ],
+        "responses": {
+          "200": { "description": "Removida" },
+          "404": { "description": "Não encontrada" }
+        }
+      }
+    },
+    "/api/quiz/today": {
+      "get": {
+        "tags": ["Quiz"],
+        "summary": "Quiz do dia",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Perguntas do dia (sem gabarito se ainda não respondido)"
+          }
+        }
+      }
+    },
+    "/api/quiz/submit": {
+      "post": {
+        "tags": ["Quiz"],
+        "summary": "Enviar respostas do quiz",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["answers"],
+                "properties": {
+                  "answers": {
+                    "type": "array",
+                    "minItems": 5,
+                    "maxItems": 5,
+                    "items": { "type": "integer" },
+                    "example": [1, 1, 2, 1, 1],
+                    "description": "Índice da opção escolhida em cada pergunta (0 a 3)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Resultado com score" },
+          "400": { "description": "Já respondido ou answers inválido" }
+        }
+      }
+    },
+    "/api/quiz/reset": {
+      "post": {
+        "tags": ["Quiz"],
+        "summary": "Resetar quiz do dia (demo)",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Novo conjunto de perguntas gerado" }
+        }
+      }
+    },
+    "/api/external/games/search": {
+      "get": {
+        "tags": ["External"],
+        "summary": "Buscar jogos (catálogo/RAWG/Steam)",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" },
+            "example": "zelda"
+          }
+        ],
+        "responses": {
+          "200": { "description": "Lista de resultados" },
+          "400": { "description": "query obrigatório" }
+        }
+      }
+    },
+    "/api/external/games/{id}": {
+      "get": {
+        "tags": ["External"],
+        "summary": "Detalhes de um jogo externo",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "id RAWG, steam-123 ou local-zelda-oot",
+            "example": "local-zelda-oot"
+          }
+        ],
+        "responses": {
+          "200": { "description": "Detalhes do jogo" },
+          "404": { "description": "Não encontrado" }
+        }
+      }
+    }
+  }
+}
